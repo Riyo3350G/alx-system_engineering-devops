@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -1ap | sort -df | tr '\n' ',' | sed 's/,$/\n/'
+ls -xamp
