@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#  script that sorts the data.
+file="apache-access.log"
+awk '{FS=" "; print $1 " " $9}' < $file | sort | uniq -c | sort -nr
