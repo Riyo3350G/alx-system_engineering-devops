@@ -2,46 +2,40 @@
 # manage_my_process Bash script
 
 file="/var/run/my_process.pid"
-function err()
-{
+
+function err() {
     echo "Usage: manage_my_process {start|stop|restart}"
 }
 
-function start()
-{
-    (./manage_my_process) &
-    echo $$ > $file
-    echo "manage_py_process started"
+function start() {
+    ./manage_my_process &  # Start the actual process and get its PID
+    echo $! > $file       # Store the PID of the started process in the file
+    echo "manage_my_process started"
 }
 
-function stop()
-{
-    pkill -f ./manage_my_process
-    sudo rm $file
+function stop() {
+    pkill -F $file       # Stop the process using the PID stored in the file
+    rm $file             # Remove the PID file
     echo "manage_my_process stopped"
 }
 
-function restart()
-{
-    pkill -f ./manage_my_process
-    rm $file
-    ./manage_my_process &
-    echo $$ > $file
+function restart() {
+    stop                # Stop the process using the stop function
+    start               # Start the process using the start function
     echo "manage_my_process restarted"
 }
 
-if [ $# -ne 1 ];
-then
+if [ $# -ne 1 ]; then
     err
 else
     case ${1} in
-    	"start")
-    	    start;;
-    	"restart")
-    	    restart;;
-    	"stop")
-    	    stop;;
-    	*)
-    	    err;;
+        "start")
+            start;;
+        "restart")
+            restart;;
+        "stop")
+            stop;;
+        *)
+            err;;
     esac
 fi
