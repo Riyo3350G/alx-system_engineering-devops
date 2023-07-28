@@ -1,0 +1,6 @@
+#!/bin/bash
+# script to be managed
+while true; do
+    echo "I am alive!" >> /tmp/my_process
+    sleep 2
+done
