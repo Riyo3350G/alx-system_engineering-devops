@@ -21,15 +21,17 @@ int infinite_while(void)
  */
 int main(void)
 {
-	int idx;
-	pid_t pid;
+	unsigned int idx;
+	pid_t zombie;
 
 	for (idx = 0; idx < 5; idx++)
 	{
-		pid = fork();
-		if (pid == NULL)
-			return (0);
-		printf("Zombie process created, PID: %d\n", pid);
+		zombie = fork();
+		if (zombie < 0)
+			perror("fork error");
+		else if (zombie == 0)
+			exit(0);
+		printf("Zombie process created, PID: %d\n", zombie);
 	}
 
 	infinite_while();
