@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Script that transfers file from client to a server
+
+# Check if params less than 3
+
+if [ "$#" -lt 3 ]
+then
+	echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
+else
+	FILE_PATH="$1"
+	SERVER_IP="$2"
+	USERNAME="$3"
+	SSH_KEY="$4"
+	scp -o StrictHostKeyChecking=no -i "$SSH_KEY" "$FILE_PATH" "$USERNAME"@"$SERVER_IP":~/
+fi
