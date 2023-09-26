@@ -1,41 +1,6 @@
-# Install The Nginx package
-package { 'nginx':
-  ensure => installed,
-}
+# Installs nginx and config using pp
 
-# Ensure Nginx service is enabled & running
-service { 'nginx':
-  ensure  => running,
-  enable  => true,
-  require => Package['nginx'],
-}
-
-# Configure Nginx to listen on port 80 and set the default page HTML
-file { '/etc/nginx/sites-available/default':
-  ensure  => file,
-  content => "server {
-    listen 80 default_server;
-    root /var/www/html;
-    index index.html;
-    location / {
-        echo 'Hello World!';
-    }
-    location /redirect_me {
-        return 301 http://www.example.com;
-    }
-  }",
-  notify  => Service['nginx'],
-  require => Package['nginx'],
-}
-
-# Create the document root directory
-file { '/var/www/html':
-  ensure => directory,
-}
-
-# Create a simple index.html file
-file { '/var/www/html/index.html':
-  ensure  => file,
-  content => 'Hello World!',
-  require => File['/var/www/html'],
+exec {'install':
+  provider => shell,
+  command  => 'sudo apt-get -y update ; sudo apt-get -y install nginx ; echo "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html ; sudo sed -i "s/server_name _;/server_name _;\n\trewrite ^\/redirect_me https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4 permanent;/" /etc/nginx/sites-available/default ; sudo service nginx start',
 }
