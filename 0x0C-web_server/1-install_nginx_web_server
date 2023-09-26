@@ -2,5 +2,16 @@
 # Install nginx web server script
 sudo apt-get -y update
 sudo apt-get -y install nginx
-echo -e "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html
-sudo service nginx start
+sudo nginx start
+mkdir /etc/nginx/html
+touch /etc/nginx/html/index.html
+echo "Hello World!" > /etc/nginx/html/index.html
+echo "server {
+    listen 80;
+    server_name localhost;
+
+    location / {
+        echo 'Hello World!';
+    }
+}" > /etc/nginx/sites-available/default
+sudo nginx restart
