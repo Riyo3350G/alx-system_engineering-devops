@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Install nginx web server script 
+# /redirect_me is redirecting to another page.
+sudo apt-get -y update
+sudo apt-get -y install nginx
+echo -e "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html
+sed -i 's|location / {|location / {\n    rewrite ^/redirect_me$ https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;|' /etc/nginx/sites-available/default
+sudo service nginx restart
