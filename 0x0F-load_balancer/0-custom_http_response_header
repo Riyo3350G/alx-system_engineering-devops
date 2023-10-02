@@ -1,32 +1,33 @@
 #!/usr/bin/env bash
 # script to install and set up Nginx
-sudo apt-get update
+
+# Update package list and upgrade installed packages
+sudo apt-get -y update
 sudo apt-get upgrade -y
-sudo apt-get install -y nginx
 
-mkdir -p /var/www/html
-touch /var/www/html/index.html
-echo "Hello World!" > /var/www/html/index.html
-touch /var/www/html/custom404.html
-echo "Ceci n'est pas une page" > /var/www/html/custom404.html
+# Install Nginx
+sudo apt-get -y install nginx
 
-server="server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    add_header X-Served-By $HOSTNAME;
-    root   /var/www/html;
-    index  index.html index.htm;
+# Download an Nginx configuration file from exampleconfig.com and save it as /etc/nginx/sites-available/default
+sudo wget -q -O /etc/nginx/sites-available/default http://exampleconfig.com/static/raw/nginx/ubuntu20.04/etc/nginx/sites-available/default
 
-    location /redirect_me {
-        return 301 http://youtube.com/;
-    }
+# Define the path to the Nginx configuration file
+nginx_config="/etc/nginx/sites-available/default"
 
-    error_page 404 /custom404.html;
-    location /404 {
-      root /var/www/html;
-      internal;
-    }
-}"
-sudo echo > /etc/nginx/sites-available/default
+# Create a basic "Hello World!" index file in the default web root directory
+sudo sh -c "echo 'Hello World!' > /var/www/html/index.nginx-debian.html"
 
+# Add a custom location block for a redirect to a YouTube video
+sudo sed -i '/^}$/i \ \n\tlocation \/redirect_me {return 301 https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4;}' $nginx_config
+
+# Add a custom location block for a 404 error page
+sudo sed -i '/^}$/i \ \n\tlocation @404 {return 404 "Ceci n'\''est pas une page\\n";}' $nginx_config
+
+# Replace "=404" with "@404" in the configuration
+sudo sed -i 's/=404/@404/g' $nginx_config
+
+# Add a custom "X-Served-By" header to the default location block
+sudo sed -i "0,/location \/ {/s/location \/ {/&\n\t\tadd_header X-Served-By '$HOSTNAME';/" $nginx_config
+
+# Restart Nginx to apply the configuration changes
 sudo service nginx restart
