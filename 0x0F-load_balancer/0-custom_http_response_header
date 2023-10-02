@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 # script to install and set up Nginx
-apt-get -y update
-apt-get -y install nginx
-echo "Hello World!" > /var/www/html/index.nginx-debian.html
-sed -i "/server_name _;/ a\\\trewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;" /etc/nginx/sites-available/default
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/custom_404.html
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y nginx
 
-echo "server {
+mkdir -p /var/www/html
+touch /var/www/html/index.html
+echo "Hello World!" > /var/www/html/index.html
+touch /var/www/html/custom404.html
+echo "Ceci n'est pas une page" > /var/www/html/custom404.html
+
+server="server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    add_header X-Served-By \$HOSTNAME;
+    add_header X-Served-By $HOSTNAME;
     root   /var/www/html;
     index  index.html index.htm;
 
@@ -22,5 +26,7 @@ echo "server {
       root /var/www/html;
       internal;
     }
-}" | sudo tee /etc/nginx/sites-available/default > /dev/null
-service nginx restart
+}"
+sudo echo > /etc/nginx/sites-available/default
+
+sudo service nginx restart
