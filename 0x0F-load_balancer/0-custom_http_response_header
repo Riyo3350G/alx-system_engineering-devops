@@ -1,33 +1,45 @@
 #!/usr/bin/env bash
 # script to install and set up Nginx
 
-# Update package list and upgrade installed packages
-sudo apt-get -y update
-sudo apt-get upgrade -y
+# Update package list and upgrade
 
-# Install Nginx
-sudo apt-get -y install nginx
+apt-get update
+apt-get -y install nginx
+ufw allow 'Nginx HTTP'
+mkdir -p /var/www/html /var/www/error
+chmod -R 755 /var/www
+echo 'Hello World!' > /var/www/html/index.html
+echo -e "Ceci n\x27est pas une page" > /var/www/error/404.html
+# the server's configuration
+SERVER_CONFIG=\
+"server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
 
-# Download an Nginx configuration file from exampleconfig.com and save it as /etc/nginx/sites-available/default
-sudo wget -q -O /etc/nginx/sites-available/default http://exampleconfig.com/static/raw/nginx/ubuntu20.04/etc/nginx/sites-available/default
+	root /var/www/html;
+	index index.html index.htm index.nginx-debian.html;
 
-# Define the path to the Nginx configuration file
-nginx_config="/etc/nginx/sites-available/default"
+	server_name _;
 
-# Create a basic "Hello World!" index file in the default web root directory
-sudo sh -c "echo 'Hello World!' > /var/www/html/index.nginx-debian.html"
+	location / {
+		try_files \$uri \$uri/ =404;
+		add_header X-Served-By \$hostname;
+	}
 
-# Add a custom location block for a redirect to a YouTube video
-sudo sed -i '/^}$/i \ \n\tlocation \/redirect_me {return 301 https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4;}' $nginx_config
+	if (\$request_filename ~ redirect_me){
+		rewrite ^ https://sketchfab.com/bluepeno/models permanent;
+	}
 
-# Add a custom location block for a 404 error page
-sudo sed -i '/^}$/i \ \n\tlocation @404 {return 404 "Ceci n'\''est pas une page\\n";}' $nginx_config
-
-# Replace "=404" with "@404" in the configuration
-sudo sed -i 's/=404/@404/g' $nginx_config
-
-# Add a custom "X-Served-By" header to the default location block
-sudo sed -i "0,/location \/ {/s/location \/ {/&\n\t\tadd_header X-Served-By '$HOSTNAME';/" $nginx_config
-
-# Restart Nginx to apply the configuration changes
-sudo service nginx restart
+	error_page 404 /404.html;
+	location = /404.html {
+		root /var/www/error/;
+		internal;
+		add_header X-Served-By \$hostname;
+	}
+}"
+bash -c "echo -e '$SERVER_CONFIG' > /etc/nginx/sites-enabled/default"
+if [ "$(pgrep -c nginx)" -le 0 ]; then
+	service nginx start
+else
+	service nginx restart
+fi
