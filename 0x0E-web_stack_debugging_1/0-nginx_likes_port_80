@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 # Bash script that configures a server to the above requirements
 
 sed -i "s/8080/80/g" /etc/nginx/sites-enabled/default
