@@ -2,16 +2,18 @@
 # script to install and set up Nginx
 
 # Update package list and upgrade
+sudo apt-get update
+sudo apt-get -y install nginx   # Install Nginx
+ufw allow 'Nginx HTTP'          # Allow HTTP traffic in UFW (Uncomplicated Firewall)
 
-apt-get update
-apt-get -y install nginx
-ufw allow 'Nginx HTTP'
-mkdir -p /var/www/html /var/www/error
-chmod -R 755 /var/www
-echo 'Hello World!' > /var/www/html/index.html
-echo -e "Ceci n\x27est pas une page" > /var/www/error/404.html
-# the server's configuration
-SERVER_CONFIG=\
+# Create directories and set permissions
+mkdir -p /var/www/html /var/www/error   # Create directories for website content and error pages
+chmod -R 755 /var/www                  # Set permissions on the /var/www directory
+echo 'Hello World!' > /var/www/html/index.html  # Create a simple "Hello World!" index.html file
+echo -e "Ceci n\x27est pas une page" > /var/www/error/404.html  # Create a custom 404 error page
+
+# Configure Nginx server
+CONFIG=\
 "server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
@@ -22,24 +24,28 @@ SERVER_CONFIG=\
 	server_name _;
 
 	location / {
-		try_files \$uri \$uri/ =404;
-		add_header X-Served-By \$hostname;
+		try_files \$uri \$uri/ =404;  # Serve static files or return a 404 error
+		add_header X-Served-By \$hostname;  # Add a custom header to the response
 	}
 
 	if (\$request_filename ~ redirect_me){
-		rewrite ^ https://sketchfab.com/bluepeno/models permanent;
+		rewrite ^ https://sketchfab.com/bluepeno/models permanent;  # Redirect based on a specific request
 	}
 
 	error_page 404 /404.html;
 	location = /404.html {
 		root /var/www/error/;
 		internal;
-		add_header X-Served-By \$hostname;
+		add_header X-Served-By \$hostname;  # Add a custom header to the 404 error page
 	}
 }"
-bash -c "echo -e '$SERVER_CONFIG' > /etc/nginx/sites-enabled/default"
+
+# Write the server configuration to Nginx's default site
+bash -c "echo -e '$CONFIG' > /etc/nginx/sites-enabled/default"
+
+# Start or restart Nginx service
 if [ "$(pgrep -c nginx)" -le 0 ]; then
-	service nginx start
+	service nginx start  # Start Nginx if it's not running
 else
-	service nginx restart
+	service nginx restart  # Restart Nginx if it's already running
 fi
