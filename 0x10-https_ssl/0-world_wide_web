@@ -15,12 +15,6 @@ subdomain_inf () {
     fi
 }
 
-# Check if both domain and subdomain are provided
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 <domain> [<subdomain>]"
-    exit 1
-fi
-
 # Assign domain and subdomain arguments
 domain="$1"
 subdomain="$2"
