@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Bash script that will display information about subdomains.
+# Path: alx-system_engineering-devops/0x10-https_ssl/0-world_wide_web
+
+
+# Function to query DNS records and display information
+subdomain_inf () {
+    local subdomain="$1"
+    local domain="$2"
+    
+    result=$(dig +short "$subdomain.$domain")
+    if [ -n "$result" ]; then
+        record_type=$(dig +short "$subdomain.$domain" | awk 'NR==1 {print $2}')
+        echo "The subdomain $subdomain is a $record_type record and points to $result"
+    fi
+}
+
+# Check if both domain and subdomain are provided
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <domain> [<subdomain>]"
+    exit 1
+fi
+
+# Assign domain and subdomain arguments
+domain="$1"
+subdomain="$2"
+
+# If subdomain is not provided, use default subdomains
+if [ -z "$subdomain" ]; then
+    subdomains=("www" "lb-01" "web-01" "web-02")
+else
+    subdomains=("$subdomain")
+fi
+
+# Call the subdomain_info function for each subdomain
+for sub in "${subdomains[@]}"; do
+    subdomain_inf "$sub" "$domain"
+done
