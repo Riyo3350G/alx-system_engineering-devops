@@ -34,13 +34,17 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
-frontend http_front
+frontend http
         bind *:80
-        bind *:443 ssl crt /etc/haproxy/certs/www.benyechou.tech.pem
-        redirect scheme https code 301 if !{ ssl_fc }
-        default_backend http_back
+        mode http
+        default_backend web-backend
 
-backend http_back
+frontend www-https
+        bind *:443 ssl crt /etc/haproxy/certs/www.benyechou.tech.pem
+        default_backend web-backend
+
+backend web-backend
+        balance roundrobin
         redirect scheme https code 301 if !{ ssl_fc }
         server 377949-web-01 52.3.255.32
         server 377949-web-02 18.208.120.88
