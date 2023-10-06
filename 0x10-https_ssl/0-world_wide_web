@@ -2,31 +2,23 @@
 # Bash script that will display information about subdomains.
 # Path: alx-system_engineering-devops/0x10-https_ssl/0-world_wide_web
 
-
-# Function to query DNS records and display information
-subdomain_inf () {
-    local subdomain="$1"
-    local domain="$2"
-    
-    result=$(dig +short "$subdomain.$domain")
-    if [ -n "$result" ]; then
-        record_type=$(dig +short "$subdomain.$domain" | awk 'NR==1 {print $2}')
-        echo "The subdomain $subdomain is a $record_type record and points to $result"
-    fi
-}
-
-# Assign domain and subdomain arguments
+subdomains_list=("www" "lb-01" "web-01" "web-02")
 domain="$1"
 subdomain="$2"
 
-# If subdomain is not provided, use default subdomains
-if [ -z "$subdomain" ]; then
-    subdomains=("www" "lb-01" "web-01" "web-02")
-else
-    subdomains=("$subdomain")
-fi
+dig_command () {
+    subdomain="$2"
+    INFO="$(dig "$subdomain.$domain" | grep -A1 'ANSWER SECTION:' | awk 'NR==2')"
+    IP=$(echo "$INFO" | awk '{print $5}')
+    RECORD=$(echo "$INFO" | awk '{print $4}')
 
-# Call the subdomain_info function for each subdomain
-for sub in "${subdomains[@]}"; do
-    subdomain_inf "$sub" "$domain"
-done
+    echo "The subdomain $subdomain is a $RECORD record and points to $IP"
+}
+
+if [ $# -eq 1 ]; then
+    for sub in "${subdomains_list[@]}"; do
+        dig_command "$domain" "$sub"
+    done
+elif [ $# -eq 2 ]; then
+    dig_command "$domain" "$subdomain"
+fi
