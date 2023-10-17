@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Bash script that configures the container to fit our needs
+
+# create a new user on config file
+echo "user nginx;" >> /etc/nginx/nginx.conf
+# change permissions of the config file
+chmod 644 /etc/nginx/nginx.conf
+# edit default config file to listen on port 8080 instead of 80
+sed -i 's/80/8080/g' /etc/nginx/sites-available/default
+# kill apache2 process
+pkill apache2
+# start nginx as nginx user
+sudo -u nginx service nginx start
