@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 # Script that run whoami command with the user argument passed
-
-user=$1
-sudo -u $user whoami
+username=$1
+sudo -u $username whoami
