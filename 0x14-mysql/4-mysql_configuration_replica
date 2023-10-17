@@ -33,7 +33,13 @@ datadir         = /var/lib/mysql
 log-error       = /var/log/mysql/error.log
 # By default we only accept connections from localhost
 # bind-address  = 127.0.0.1
+# database name
 binlog_do_db = tyrell_corp
+# set server as replica
 server-id = 2
+# log file
+log_bin  = /var/log/mysql/mysql-bin.log
+# relay_log
+relay-log = /var/log/mysql/mysql-relay-bin.log
 # Disabling symbolic-links is recommended to prevent assorted security risks
 symbolic-links=0
