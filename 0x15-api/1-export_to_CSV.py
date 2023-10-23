@@ -11,7 +11,7 @@ import sys
 
 def user_data_from_api(userId):
     user = get('https://jsonplaceholder.typicode.com/users/{}'.format(userId))
-    name = user.json().get('name')
+    username = user.json().get('username')
     response = get('https://jsonplaceholder.typicode.com/users/{}/todos'
                    .format(userId))
     data = response.json()
@@ -19,7 +19,7 @@ def user_data_from_api(userId):
     with open("{}.csv".format(userId), mode="w") as f:
         csv_writer = csv.writer(f, quoting=csv.QUOTE_ALL)
         for task in data:
-            ls = [userId, name, task.get('completed'), task.get('title')]
+            ls = [userId, username, task.get('completed'), task.get('title')]
             csv_writer.writerow(ls)
 
 
