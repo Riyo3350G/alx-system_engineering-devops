@@ -12,6 +12,8 @@ import sys
 def user_data_from_api():
 
     with open("todo_all_employees.json", mode="w") as f:
+        task_data = {}
+        
         for i in range(1, 11):
             user = get('https://jsonplaceholder.typicode.com/users/{}'
                        .format(i))
@@ -20,7 +22,6 @@ def user_data_from_api():
                        .format(i))
             data = resp.json()
             ls = []
-            task_data = {}
             for task in data:
                 row = {}
                 row["username"] = username
@@ -28,7 +29,7 @@ def user_data_from_api():
                 row["completed"] = task.get('completed')
                 ls.append(row)
             task_data[i] = ls
-            json.dump(task_data, f)
+        json.dump(task_data, f)
 
 
 if __name__ == "__main__":
