@@ -8,8 +8,7 @@ from requests import get
 import sys
 
 
-if __name__ == "__main__":
-    userId = sys.argv[1]
+def user_data_from_api(userId):
     user = get('https://jsonplaceholder.typicode.com/users/{}'.format(userId))
     name = user.json().get('name')
     response = get('https://jsonplaceholder.typicode.com/users/{}/todos'
@@ -26,3 +25,7 @@ if __name__ == "__main__":
     for task in data:
         if task.get('completed') is True:
             print("\t {}".format(task.get('title')))
+
+
+if __name__ == "__main__":
+    user_data_from_api(sys.argv[1])
