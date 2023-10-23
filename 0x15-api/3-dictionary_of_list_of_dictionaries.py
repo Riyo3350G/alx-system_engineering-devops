@@ -23,9 +23,9 @@ def user_data_from_api():
             task_data = {}
             for task in data:
                 row = {}
+                row["username"] = username
                 row["task"] = task.get('title')
                 row["completed"] = task.get('completed')
-                row["username"] = username
                 ls.append(row)
             task_data[i] = ls
             json.dump(task_data, f)
