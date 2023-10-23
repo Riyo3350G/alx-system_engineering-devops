@@ -5,14 +5,15 @@ for a given employee ID, returns information
 about his/her TODO list progress.
 """
 from requests import get
-from sys import argv
+import sys
 
 
 if __name__ == "__main__":
-    user = get('https://jsonplaceholder.typicode.com/users/{}'.format(argv[1]))
+    userId = sys.argv[1]
+    user = get('https://jsonplaceholder.typicode.com/users/{}'.format(userId))
     name = user.json().get('name')
     response = get('https://jsonplaceholder.typicode.com/user/{}/todos'
-                   .format(argv[1]))
+                   .format(userId))
     data = response.json()
 
     total_task = len(data)
