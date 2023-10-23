@@ -12,7 +12,7 @@ if __name__ == "__main__":
     userId = sys.argv[1]
     user = get('https://jsonplaceholder.typicode.com/users/{}'.format(userId))
     name = user.json().get('name')
-    response = get('https://jsonplaceholder.typicode.com/user/{}/todos'
+    response = get('https://jsonplaceholder.typicode.com/users/{}/todos'
                    .format(userId))
     data = response.json()
 
