@@ -13,7 +13,7 @@ def user_data_from_api():
 
     with open("todo_all_employees.json", mode="w") as f:
         task_data = {}
-        
+
         for i in range(1, 11):
             user = get('https://jsonplaceholder.typicode.com/users/{}'
                        .format(i))
