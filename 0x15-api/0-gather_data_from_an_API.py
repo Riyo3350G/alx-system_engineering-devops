@@ -10,7 +10,7 @@ import sys
 
 def user_data_from_api(userId):
     user = get('https://jsonplaceholder.typicode.com/users/{}'.format(userId))
-    name = user.json().get('name')
+    name = user.json().get("name")
     response = get('https://jsonplaceholder.typicode.com/users/{}/todos'
                    .format(userId))
     data = response.json()
