@@ -10,10 +10,12 @@ def top_ten(subreddit):
     '''Returns the number of subscribers for a given subreddit.'''
     url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
     headers = {'User-Agent': 'My User Agent 1.0'}
-    response = requests.get(url, headers=headers)
+    params = {'limit': 10}
+    response = requests.get(url, headers=headers, params=params)
+    dict = response.json()
     if response.status_code == 200:
         for i in range(10):
-            print(response.json().get('data').get('children')[i]
-                  .get('data').get('title'))
+            print(dict.get('data').get('children')[i].get('data').get('title'))
+            print()
     else:
         print(None)
