@@ -8,8 +8,8 @@ import requests
 
 def recurse(subreddit, hot_list=[], after=None):
     '''Returns the number of subscribers for a given subreddit.'''
-    url = 'https://www.reddit.com/r/{}/hot.json?after={}'.format(
-        subreddit, after)
+    url = 'https://www.reddit.com/r/{}/hot.json'.format(
+        subreddit)
     headers = {'User-Agent': 'My User Agent 1.0'}
     response = requests.get(url, headers=headers)
     params = {
