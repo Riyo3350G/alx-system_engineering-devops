@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 # Reload gunicorn with graceful way (HUB)
-pgrep gunicorn | xargs kill -HUP
+# pgrep gunicorn | xargs kill -HUP
+pgrep gunicorn | xargs -I {} kill -HUP {}
